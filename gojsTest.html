@@ -9,18 +9,18 @@
     <title>Tariff View</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <style>
-      #infoBoxHolder {
-        background-color: beige;
-        border: 1px solid black;
-      }
-    </style>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/gh/brbjr1/cdn/gojs/2.1.5/release/go-debug.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/brbjr1/cdn/gojs/2.1.10/release/go-debug.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/gh/brbjr1/cdn/gojs/2.1.5/OverviewResizingTool.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/brbjr1/cdn/gojs/2.1.10/extensions/OverviewResizingTool.js"></script>
+
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.jsdelivr.net/gh/brbjr1/cdn/gojs/2.1.10/extensions/ZoomSlider.css"
+    />
+    <script src="https://cdn.jsdelivr.net/gh/brbjr1/cdn/gojs/2.1.10/extensions/ZoomSlider.js"></script>
   </head>
   <body>
     <div id="sample">
@@ -28,7 +28,11 @@
         <!-- Initially Empty, it is populated when updateInfoBox is called -->
       </div>
       <div id="diagramEventsMsg"></div>
-
+      <p>
+        <button id="zoomToFit">Zoom to Fit</button>
+        <button id="collapseAll">Collapse All</button>
+        <button id="expandAll">Expand All</button>
+      </p>
       <div
         id="myDiagramDiv"
         style="border: solid 1px black; width:100%; height:600px"
@@ -37,27 +41,81 @@
         id="myOverviewDiv"
         style="border: solid 1px black; width: 250px; height: 200px"
       ></div>
-      <p><button id="zoomToFit">Zoom to Fit</button></p>
     </div>
     <script>
       let dataFromSerer = {
         data: [
-          { key: "Cenizo Jct - TEST", loc: "0 0" },
-          { key: "BASF Plant Test" },
-          { key: "Talbutt Jct - TEST" },
-          { key: "Gdale Stn - TEST" },
-          { key: "Kone KBS Jct - TEST" },
-          { key: "Valley Wells Jct - TEST" },
-          { key: "Twin Eagle Inj - TEST" }
+          {
+            info: "Cenizo Jct - TEST",
+            isExpanded: true,
+            key: "Cenizo Jct - TEST"
+          },
+          {
+            info: "Cenizo Jct - TEST",
+            isExpanded: true,
+            key: "BASF Plant Test"
+          },
+          {
+            info: "Talbutt Jct - TEST",
+            isExpanded: true,
+            key: "Talbutt Jct - TEST"
+          },
+          {
+            info: "Talbutt Jct - TEST",
+            isExpanded: true,
+            key: "Gdale Stn - TEST"
+          },
+          {
+            info: "Kone KBS Jct - TEST",
+            isExpanded: true,
+            key: "Kone KBS Jct - TEST"
+          },
+          {
+            info: "Kone KBS Jct - TEST",
+            isExpanded: true,
+            key: "Valley Wells Jct - TEST"
+          },
+          {
+            info: "Buckhorn Inj - TEST",
+            isExpanded: true,
+            key: "Buckhorn Inj - TEST"
+          }
         ],
         links: [
-          { from2: "Cenizo Jct - TEST", to: "BASF Plant Test" },
-          { from2: "Talbutt Jct - TEST", to: "Gdale Stn - TEST" },
-          { from2: "Cenizo Jct - TEST", to: "Talbutt Jct - TEST" },
-          { from2: "Kone KBS Jct - TEST", to: "Valley Wells Jct - TEST" },
-          { from2: "Twin Eagle Inj - TEST", to: "Kone KBS Jct - TEST" },
-          { from2: "Valley Wells Jct - TEST", to: "Cenizo Jct - TEST" }
-        ]
+          {
+            from2: "Cenizo Jct - TEST",
+            info: "From: Cenizo Jct - TEST\r\nTo: BASF Plant Test\r\n",
+            to: "BASF Plant Test"
+          },
+          {
+            from2: "Talbutt Jct - TEST",
+            info: "From: Talbutt Jct - TEST\r\nTo: Gdale Stn - TEST\r\n",
+            to: "Gdale Stn - TEST"
+          },
+          {
+            from2: "Cenizo Jct - TEST",
+            info: "From: Cenizo Jct - TEST\r\nTo: Talbutt Jct - TEST\r\n",
+            to: "Talbutt Jct - TEST"
+          },
+          {
+            from2: "Kone KBS Jct - TEST",
+            info:
+              "From: Kone KBS Jct - TEST\r\nTo: Valley Wells Jct - TEST\r\n",
+            to: "Valley Wells Jct - TEST"
+          },
+          {
+            from2: "Buckhorn Inj - TEST",
+            info: "From: Buckhorn Inj - TEST\r\nTo: Kone KBS Jct - TEST\r\n",
+            to: "Kone KBS Jct - TEST"
+          },
+          {
+            from2: "Valley Wells Jct - TEST",
+            info: "From: Valley Wells Jct - TEST\r\nTo: Cenizo Jct - TEST\r\n",
+            to: "Cenizo Jct - TEST"
+          }
+        ],
+        settings:
+          "[{&quot;key&quot;:&quot;Cenizo Jct - TEST&quot;,&quot;loc&quot;:&quot;572.0627441550799 125.5&quot;,&quot;isExpanded&quot;:false},{&quot;key&quot;:&quot;BASF Plant Test&quot;,&quot;loc&quot;:&quot;734.5855916533878 50.5&quot;,&quot;isExpanded&quot;:false},{&quot;key&quot;:&quot;Talbutt Jct - TEST&quot;,&quot;loc&quot;:&quot;734.5855916533878 225.5&quot;,&quot;isExpanded&quot;:false},{&quot;key&quot;:&quot;Gdale Stn - TEST&quot;,&quot;loc&quot;:&quot;897.1084391516958 225.5&quot;,&quot;isExpanded&quot;:false},{&quot;key&quot;:&quot;Kone KBS Jct - TEST&quot;,&quot;loc&quot;:&quot;222.98793538893295 50.5&quot;,&quot;isExpanded&quot;:false},{&quot;key&quot;:&quot;Valley Wells Jct - TEST&quot;,&quot;loc&quot;:&quot;400.07625072171345 125.5&quot;,&quot;isExpanded&quot;:false},{&quot;key&quot;:&quot;Buckhorn Inj - TEST&quot;,&quot;loc&quot;:&quot;21.93163299560547 -38.5&quot;,&quot;isExpanded&quot;:true}]"
       };
 
       var j$ = jQuery.noConflict();
@@ -66,44 +124,48 @@
         drawresult(dataFromSerer);
       });
 
+      function decodeHtml(html)
+      {
+          var txt = document.createElement("textarea");
+          txt.innerHTML = html;
+          return txt.value;
+      }
+
+      function setupMySettings(s1) {
+        let result = [];
+        try {
+          if (s1) {
+            s1 = decodeHtml(s1);
+            result = JSON.parse(s1);
+          }
+        } catch (err) {
+          console.log({ log: "Error setupMySettings", err: err, s1: s1 });
+        }
+        return result;
+      }
+
       function drawresult(data) {
+        let nodeDataArray = [];
+
         var $ = go.GraphObject.make; // for conciseness in defining templates
 
-        let lastStroked = null; // this remembers the last highlight Shape
-
-        var myToolTip = $(go.HTMLInfo, {
-          show: showToolTip
-          // do nothing on hide: This tooltip doesn't hide unless the mouse leaves the diagram
+        let myDiagram = $(go.Diagram, "myDiagramDiv", {
+          layout: $(go.LayeredDigraphLayout, { isInitial: false }),
+          "undoManager.isEnabled": true, // enable undo & redo
+          initialAutoScale: go.Diagram.Uniform,
+          "toolManager.hoverDelay": 10 // how quickly tooltips are shown
         });
-
-        let myDiagram = $(
-          go.Diagram,
-          "myDiagramDiv", // create a Diagram for the DIV HTML element
-          {
-            layout: $(go.ForceDirectedLayout),
-            "undoManager.isEnabled": true, // enable undo & redo
-            initialAutoScale: go.Diagram.Uniform,
-            "toolManager.hoverDelay": 10, // how quickly tooltips are shown
-            mouseOver: doMouseOver, // this event handler is defined below
-            click: doMouseOver, // this event handler is defined below
-            layout: $(go.TreeLayout, {
-              angle: 0,
-              arrangement: go.TreeLayout.ArrangementFixedRoots
-            })
-          }
-        );
 
         myDiagram.nodeTemplate = $(
           go.Node,
-          "Vertical",
+          "Horizontal",
           {
             selectable: true,
-            toolTip: myToolTip,
             selectionObjectName: "SHAPE",
             locationSpot: go.Spot.Center,
             locationObjectName: "SHAPE"
           },
-          new go.Binding("location", "loc", go.Point.parse),
+
           $(
             go.Panel,
             "Spot",
@@ -116,13 +178,25 @@
                 margin: new go.Margin(4, 2, 2, 2)
               },
               new go.Binding("text", "key")
-            )
+            ),
+            {
+              toolTip: $(
+                "ToolTip",
+                $(go.TextBlock, { margin: 4 }, new go.Binding("text", "info"))
+              )
+            }
           ),
+
+          new go.Binding("location", "loc", go.Point.parse).makeTwoWay(
+            go.Point.stringify
+          ),
+
           $(
             go.Panel,
             { height: 17 }, // always this height, even if the TreeExpanderButton is not visible
             $("TreeExpanderButton")
-          )
+          ),
+          new go.Binding("isTreeExpanded", "isExpanded").makeTwoWay()
         );
 
         myDiagram.linkTemplate = $(
@@ -131,23 +205,44 @@
             isPanelMain: true,
             stroke: "transparent",
             strokeWidth: 18
-          }), // thick undrawn path
+          }),
           $(go.Shape, { isPanelMain: true }), // default stroke === "black", strokeWidth === 1
           $(go.Shape, { toArrow: "Standard" }),
           {
-            // a mouse-over highlights the link by changing the first main path shape's stroke:
             mouseEnter: function(e, link) {
               link.elt(0).stroke = "rgba(0,90,156,0.3)";
             },
             mouseLeave: function(e, link) {
               link.elt(0).stroke = "transparent";
             }
+          },
+          {
+            toolTip: $(
+              "ToolTip",
+              $(go.TextBlock, { margin: 4 }, new go.Binding("text", "info"))
+            )
           }
         );
 
-        let nodeDataArray = [];
+        let mysettings = setupMySettings(data.settings);
+
         for (let dta of data.data) {
-          nodeDataArray.push({ key: dta.key, loc: "0 0" });
+          const getdtaSettings = mysettings.find(
+            setting => setting.key === dta.key
+          );
+
+          nodeDataArray.push({
+            key: dta.key,
+            loc: getdtaSettings
+              ? getdtaSettings.loc
+              : dta.hasOwnProperty("loc")
+              ? dta.loc
+              : "",
+            info: dta.hasOwnProperty("info") ? dta.info : "",
+            isExpanded: getdtaSettings
+              ? getdtaSettings.isExpanded === true
+              : dta.isExpanded === true
+          });
         }
 
         let mylinks = [];
@@ -155,9 +250,26 @@
           mylinks.push({
             from: mylink.from2,
             to: mylink.to,
-            routing: go.Link.Normal
+            info: mylink.hasOwnProperty("info") ? mylink.info : ""
           });
         }
+
+        const logsetting = mysettings.find(
+            setting => setting.key === 'Buckhorn Inj - TEST'
+          );
+
+          const logsetting2 = nodeDataArray.find(
+            setting => setting.key === 'Buckhorn Inj - TEST'
+          );
+
+        console.log({
+          data: data,
+          nodeDataArray: nodeDataArray,
+          logsetting: JSON.stringify(logsetting),
+          logsetting2: JSON.stringify(logsetting2),
+          mylinks: mylinks,
+          mysettings: mysettings
+        });
 
         myDiagram.model = new go.GraphLinksModel(nodeDataArray, mylinks);
 
@@ -179,207 +291,92 @@
             myDiagram.zoomToFit();
           });
 
-        // Called when the mouse is over the diagram's background
-        function doMouseOver(e) {
-          if (e === undefined) e = myDiagram.lastInput;
-          var doc = e.documentPoint;
-          // find all Nodes that are within 100 units
-          var list = myDiagram.findObjectsNear(doc, 100, null, function(x) {
-            return x instanceof go.Node;
-          });
-          // now find the one that is closest to e.documentPoint
-          var closest = null;
-          var closestDist = 50;
-          list.each(function(node) {
-            var dist = doc.distanceSquaredPoint(
-              node.getDocumentPoint(go.Spot.Center)
-            );
-            if (dist < closestDist) {
-              closestDist = dist;
-              closest = node;
+        document
+          .getElementById("collapseAll")
+          .addEventListener("click", function() {
+            /* for (let node of nodeDataArray) {
+                node.isExpanded = false;
             }
+            */
+            /*
+            myDiagram.model.commit(function(m) {
+              for (let node of m.nodeDataArray) {
+                //m.set(data, "isExpanded", false);
+                node.isExpanded = false;
+              }
+            }, "isTreeExpanded");
+            myDiagram.updateAllTargetBindings();
+
+            */
+            myDiagram.commit(function(d) {
+              d.nodes.each(function(n) { n.isTreeExpanded = false; });
+            }, "collapse all");
+
+
           });
-          showToolTip(closest, myDiagram);
-        }
 
-        // Called with a Node (or null) that the mouse is over or near
-        function showToolTip(obj, diagram) {
-          if (obj !== null) {
-            var node = obj.part;
-            var e = diagram.lastInput;
-            var shape = node.findObject("SHAPE");
-            shape.stroke = "red";
-            if (lastStroked !== null && lastStroked !== shape)
-              lastStroked.stroke = null;
-            lastStroked = shape;
-            updateInfoBox(e.viewPoint, node.data);
-          } else {
-            if (lastStroked !== null) lastStroked.stroke = null;
-            lastStroked = null;
-            document.getElementById("infoBoxHolder").innerHTML = "";
-          }
-        }
+        document
+          .getElementById("expandAll")
+          .addEventListener("click", function() {
+            /*for (let node of nodeDataArray) {
+                node.isExpanded = true;
+            }*/
+            /*myDiagram.model.commit(function(m) {
+              for (let node of m.nodeDataArray) {
+                //m.set(data, "isExpanded", true);
+                node.isExpanded = true;
+              }
+            }, "isTreeExpanded");
+            myDiagram.updateAllTargetBindings();
+            */
+            myDiagram.commit(function(d) {
+              d.nodes.each(function(n) { n.isTreeExpanded = true; });
+            }, "expand all");
 
-        // Make sure the infoBox is momentarily hidden if the user tries to mouse over it
-        var infoBoxH = document.getElementById("infoBoxHolder");
-        infoBoxH.addEventListener(
-          "mousemove",
-          function() {
-            var box = document.getElementById("infoBoxHolder");
-            box.style.left = parseInt(box.style.left) + "px";
-            box.style.top = parseInt(box.style.top) + 30 + "px";
-          },
-          false
-        );
 
-        var diagramDiv = document.getElementById("myDiagramDiv");
-        // Make sure the infoBox is hidden when the mouse is not over the Diagram
-        diagramDiv.addEventListener(
-          "mouseout",
-          function(e) {
-            if (lastStroked !== null) lastStroked.stroke = null;
-            lastStroked = null;
 
-            var infoBox = document.getElementById("infoBox");
-            var elem = document.elementFromPoint(e.clientX, e.clientY);
-            if (
-              elem !== null &&
-              (elem === infoBox || elem.parentNode === infoBox)
-            ) {
-              var box = document.getElementById("infoBoxHolder");
-              box.style.left = parseInt(box.style.left) + "px";
-              box.style.top = parseInt(box.style.top) + 30 + "px";
-            } else {
-              var box = document.getElementById("infoBoxHolder");
-              box.innerHTML = "";
-            }
-          },
-          false
-        );
+          });
 
-        myDiagram.addDiagramListener("Modified", function(e) {
-          // let tosave = myDiagram.model.toJson();
-          // myDiagram.isModified = false;
-          /*
-          var button = document.getElementById("SaveButton");
-          if (button) button.disabled = !myDiagram.isModified;
-          var idx = document.title.indexOf("*");
-          if (myDiagram.isModified) {
-            if (idx < 0) document.title += "*";
-          } else {
-            if (idx >= 0) document.title = document.title.substr(0, idx);
-          }
-          */
-        });
-
+        /*
         myDiagram.addDiagramListener("ObjectSingleClicked", function(e) {
           var part = e.subject.part;
           if (!(part instanceof go.Link))
-            showMessage("Clicked on " + part.data.key);
+            console.log({'log':'ObjectSingleClicked', 'key':part.data.key})
         });
 
         myDiagram.addDiagramListener("SelectionMoved", function(e) {
-          var part = e.subject.part;
+          //var part = e.subject.part;
           //if (!(part instanceof go.Link)) showMessage("moved" + part.data.key);
+          console.log({'log':'SelectionMoved', 'e':e})
         });
+        */
 
         myDiagram.model.addChangedListener(function(e) {
           if (e.isTransactionFinished) {
-            showMessage(myDiagram.model.toJson());
+            //showMessage(myDiagram.model.toJson());
+            //console.log({'log':'addChangedListener', 'model':myDiagram.model.toJson()})
+
+            let mysettings = [];
+
+            for (let node of JSON.parse(myDiagram.model.toJson())
+              .nodeDataArray) {
+              mysettings.push({
+                key: node.key,
+                loc: node.loc,
+                isExpanded: node.isExpanded
+              });
+            }
+            //console.log({'log':'addChangedListener', 'mysettings':mysettings})
+
+            //savesettings(getUrlParam('id',''), JSON.stringify(mysettings));
           }
         });
 
-        myDiagram.addModelChangedListener(function(evt) {
-          // ignore unimportant Transaction events
-          if (!evt.isTransactionFinished) return;
-          var txn = evt.object; // a Transaction
-          if (txn === null) return;
-          // iterate over all of the actual ChangedEvents of the Transaction
-          txn.changes.each(function(e) {
-            // ignore any kind of change other than adding/removing a node
-            if (e.modelChange !== "nodeDataArray") return;
-            // record node insertions and removals
-            if (e.change === go.ChangedEvent.Insert) {
-              console.log(
-                evt.propertyName + " added node with key: " + e.newValue.key
-              );
-            } else if (e.change === go.ChangedEvent.Remove) {
-              console.log(
-                evt.propertyName + " removed node with key: " + e.oldValue.key
-              );
-            }
-          });
-
-          txn.changes.each(function(e) {
-            // record node insertions and removals
-            if (e.change === go.ChangedEvent.Property) {
-              if (e.modelChange === "linkFromKey") {
-                console.log(
-                  evt.propertyName +
-                    " changed From key of link: " +
-                    e.object +
-                    " from: " +
-                    e.oldValue +
-                    " to: " +
-                    e.newValue
-                );
-              } else if (e.modelChange === "linkToKey") {
-                console.log(
-                  evt.propertyName +
-                    " changed To key of link: " +
-                    e.object +
-                    " from: " +
-                    e.oldValue +
-                    " to: " +
-                    e.newValue
-                );
-              }
-            } else if (
-              e.change === go.ChangedEvent.Insert &&
-              e.modelChange === "linkDataArray"
-            ) {
-              console.log(evt.propertyName + " added link: " + e.newValue);
-            } else if (
-              e.change === go.ChangedEvent.Remove &&
-              e.modelChange === "linkDataArray"
-            ) {
-              console.log(evt.propertyName + " removed link: " + e.oldValue);
-            }
-          });
-        });
+        let zoomSlider = new ZoomSlider(myDiagram);
       }
 
       function showMessage(s) {
         document.getElementById("diagramEventsMsg").textContent = s;
-      }
-
-      // This function is called to update the tooltip information
-      // depending on the bound data of the Node that is closest to the pointer.
-      function updateInfoBox(mousePt, data) {
-        var box = document.getElementById("infoBoxHolder");
-        box.innerHTML = "";
-        var infobox = document.createElement("div");
-        infobox.id = "infoBox";
-        box.appendChild(infobox);
-        for (var i = 0; i < 9; i++) {
-          var child = document.createElement("div");
-          switch (i) {
-            case 0:
-              child.textContent = data.key;
-              break;
-            /*case 1: child.className = "infoTitle"; child.textContent = "Sepal Length"; break;
-          case 2: child.className = "infoValues"; child.textContent = data.sepalLength; break;
-          case 3: child.className = "infoTitle"; child.textContent = "Sepal Width"; break;
-          case 4: child.className = "infoValues"; child.textContent = data.sepalWidth; break;
-          case 5: child.className = "infoTitle"; child.textContent = "Petal Length"; break;
-          case 6: child.className = "infoValues"; child.textContent = data.petalLength; break;
-          case 7: child.className = "infoTitle"; child.textContent = "Petal Width"; break;
-          case 8: child.className = "infoValues"; child.textContent = data.petalWidth; break;*/
-          }
-          infobox.appendChild(child);
-        }
-        box.style.left = mousePt.x + 30 + "px";
-        box.style.top = mousePt.y + 20 + "px";
       }
     </script>
   </body>
